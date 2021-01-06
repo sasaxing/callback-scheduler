@@ -1,0 +1,15 @@
+{
+    "compilerOptions": {
+        "lib": ["dom", "es2018"],
+        "outDir": "./lib/",
+        "sourceMap": true,
+        "suppressImplicitAnyIndexErrors": true,
+        "strictNullChecks": true,
+        "strict": true,
+        "module": "commonjs",
+        "target": "es2017",
+        "declaration": false,
+        "esModuleInterop": true,
+    },
+    "include": ["./src/**/*.ts", "./test/**/*.ts"]
+}
