@@ -30,7 +30,7 @@ jobs:
     steps:
       - print_pipeline_id:
           my_param: "xing test param!!"
-  save_hello_world_output:
+  save_file_to_workspace:
     docker:
       - image: cimg/base:2020.01
     steps:
@@ -39,7 +39,7 @@ jobs:
           root: ~/
           paths:
             - output.txt
-  print_output_file:
+  read_file_from_workspace:
     docker:
       - image: cimg/base:2020.01
   #     - image: circleci/node:13.8.0
@@ -59,12 +59,6 @@ jobs:
 
 # Orchestrate or schedule a set of jobs
 workflows:
-  save_hello_world_output:
-    jobs:
-      - save_hello_world_output
-      - print_output_file:
-          requires:
-            - save_hello_world_output
   # Name the workflow "welcome"
   test_playground:
     # Run the welcome/run job in its own container
@@ -72,3 +66,7 @@ workflows:
       - test_env_var
       - test_command
       - fail_on_purpose_and_catch
+      - save_file_to_workspace
+      - read_file_from_workspace:
+          requires:
+            - save_file_to_workspace
