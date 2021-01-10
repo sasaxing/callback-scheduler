@@ -18,21 +18,12 @@ jobs:
   print_output_file:
     docker:
       - image: cimg/base:2020.01
+  #     - image: circleci/node:13.8.0
     steps:
       - attach_workspace:
           at: ~/
       - run: cat ~/output.txt
       - run: ls /
-  print_hello:
-    docker:
-      - image: circleci/node:13.8.0
-    steps:
-      - run: echo hello
-  print_world:
-    docker:
-      - image: circleci/node:13.8.0
-    steps:
-      - run: echo world
   show_env_var:
     docker:
       - image: cimg/base:2020.01
@@ -55,7 +46,3 @@ workflows:
     # Run the welcome/run job in its own container
     jobs:
       - show_env_var
-      - print_hello
-      - print_world:
-          requires:
-            - print_hello
