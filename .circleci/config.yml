@@ -15,6 +15,15 @@ commands:
       - run: echo << parameters.my_param >>
       - run: echo $CIRCLE_WORKFLOW_ID
 jobs:
+  fail_on_purpose_and_catch:
+    docker:
+      - image: cimg/base:2020.01
+    steps:
+      - run: return 1 # make it fail
+      - run:
+          name: Print some error logs.
+          command: echo "OH NO! ERRORS!"
+          when: on_fail
   test_command:
     docker:
       - image: cimg/base:2020.01
@@ -30,7 +39,6 @@ jobs:
           root: ~/
           paths:
             - output.txt
-      # Now the workspace has 2 more directories:  /tmp/dir/foo/bar and /tmp/dir/baz
   print_output_file:
     docker:
       - image: cimg/base:2020.01
@@ -63,3 +71,4 @@ workflows:
     jobs:
       - test_env_var
       - test_command
+      - fail_on_purpose_and_catch
