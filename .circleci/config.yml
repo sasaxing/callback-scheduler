@@ -15,6 +15,36 @@ commands:
       - run: echo << parameters.my_param >>
       - run: echo $CIRCLE_WORKFLOW_ID
 jobs:
+  build:
+    docker:
+      - image: circleci/node:13.8.0
+    steps:
+      - checkout
+      - run: npm i
+      - save_cache:
+          key: "npm-packages"
+          paths:
+            - /src/node_modules
+            - /lib
+      - run: npm run build
+  test:
+    docker:
+      - image: circleci/node:13.8.0
+    steps:
+      - checkout
+      - restore_cache: # will download it from the internet, which was store by save_cache
+          keys:
+            - "npm-packages" # I cannot find it : (
+      # - run: ls src
+      - run: npm i
+      - run: npm run build
+      - run: npm run test
+  analyze:
+    docker:
+      - image: circleci/node:13.8.0
+    steps:
+      - checkout
+      - run: npm audit
   fail_on_purpose_and_catch:
     docker:
       - image: cimg/base:2020.01
@@ -42,7 +72,6 @@ jobs:
   read_file_from_workspace:
     docker:
       - image: cimg/base:2020.01
-  #     - image: circleci/node:13.8.0
     steps:
       - attach_workspace:
           at: ~/
@@ -59,13 +88,21 @@ jobs:
 
 # Orchestrate or schedule a set of jobs
 workflows:
-  # Name the workflow "welcome"
+  my_ci_pipeline:
+    jobs:
+      - build
+      - test:
+          requires:
+            - build
+      - analyze:
+          requires:
+            - build
+            - test
   test_playground:
-    # Run the welcome/run job in its own container
     jobs:
       - test_env_var
       - test_command
-      - fail_on_purpose_and_catch
+      # - fail_on_purpose_and_catch
       - save_file_to_workspace
       - read_file_from_workspace:
           requires:
